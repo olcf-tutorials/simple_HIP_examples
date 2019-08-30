@@ -170,7 +170,7 @@ $ hipify-perl vector_addition.cu > vector_addition.cpp
 
 > NOTE: The original source file `vector_addition.cu` was not altered by using the `hipify` tool. In fact, if you do not redirect the output into a new file (as we've done here with `> vector_addition.cpp`), the reulting output would simply be printed to stdout. 
 
-Before looking at the new file that was created, notice that there were several warnings printed. These warnings are there to notify you that some text blocks that are commonly-used in CUDA codes, but are not part of the actual CUDA API, CUDA built-ins, or CUDA variable types, were found (in this case, `cudaError` from out `cudaErrorCheck` macro).
+Before looking at the new file that was created, notice that there were several warnings printed. These warnings are there to notify you that some text blocks that are commonly-used in CUDA codes, but are not part of the actual CUDA API, CUDA built-ins, or CUDA variable types, were found (in this case, "`cudaError`" from out `cudaErrorCheck` macro).
 
 Ok, now let's look at the new file, `vector_addition.cpp`:
 
@@ -290,9 +290,9 @@ Looking at this code, we can see the following:
 
 > NOTE: The warnings that were produced when we used the `hipify` tool only found the error checking macro (`cudaErrorCheck`) because it contained a commonly-used block of text ("`cudaError`"), but did not catch the other user-defined functions, variables, and text.
 
-> NOTE: This code will still compile and run correctly without making the previously mentioned changes.
+> NOTE: This code will still compile and run correctly without making the additional changes.
 
-For this simple code, we can manually translate all occurrences of `CUDA` and `cuda` to `HIP` and `hip`, respectively, using the following commands:
+For this simple code, we can manually translate all occurrences of `CUDA` and `cuda` to `HIP` and `hip`, respectively, using the following `sed` commands:
 
 ```c
 $ sed -i 's/CUDA/HIP/g' vector_addition.cpp
@@ -308,6 +308,8 @@ $ sed -i 's/cuErr/hipErr/g' vector_addition.cpp
 > NOTE: By removing the `-i` flag from `sed`, you can see the results first instead of editing the file in place.
 
 > NOTE: This will obviously be application-specific so please use appropriate commands for your own application.
+
+Now the code is fully ported to HIP - including both the necessary steps as well as the manual steps that were (in this case) really just to change the user-defined function/variable names. In the future, we should probably use terms like "device" instead of platform-specific terms such as "CUDA" and "HIP".
 
 ## Compiling and Running hipify Version on Summit
 
