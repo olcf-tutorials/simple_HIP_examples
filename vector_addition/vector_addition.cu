@@ -14,7 +14,7 @@ do{                                                                             
 #define N 1048576
 
 // Kernel
-__global__ void add_vectors_cuda(int *a, int *b, int *c)
+__global__ void add_vectors_cuda(double *a, double *b, double *c)
 {
 	int id = blockDim.x * blockIdx.x + threadIdx.x;
 	if(id < N) c[id] = a[id] + b[id];
@@ -23,25 +23,26 @@ __global__ void add_vectors_cuda(int *a, int *b, int *c)
 // Main program
 int main()
 {
-	// Number of bytes to allocate for N integers
-	size_t bytes = N*sizeof(int);
+	// Number of bytes to allocate for N doubles
+	size_t bytes = N*sizeof(double);
 
 	// Allocate memory for arrays A, B, and C on host
-	int *A = (int*)malloc(bytes);
-	int *B = (int*)malloc(bytes);
-	int *C = (int*)malloc(bytes);
+	double *A = (double*)malloc(bytes);
+	double *B = (double*)malloc(bytes);
+	double *C = (double*)malloc(bytes);
 
 	// Allocate memory for arrays d_A, d_B, and d_C on device
-	int *d_A, *d_B, *d_C;
+	double *d_A, *d_B, *d_C;
 	cudaErrorCheck( cudaMalloc(&d_A, bytes) );	
 	cudaErrorCheck( cudaMalloc(&d_B, bytes) );
 	cudaErrorCheck( cudaMalloc(&d_C, bytes) );
 
-	// Fill host arrays A and B
+	// Fill host arrays A, B, and C
 	for(int i=0; i<N; i++)
 	{
-		A[i] = 1;
-		B[i] = 2;
+		A[i] = 1.0;
+		B[i] = 2.0;
+        C[i] = 0.0;
 	}
 
 	// Copy data from host arrays A and B to device arrays d_A and d_B
@@ -70,11 +71,12 @@ int main()
 	cudaErrorCheck( cudaMemcpy(C, d_C, bytes, cudaMemcpyDeviceToHost) );
 
 	// Verify results
+    double tolerance = 1.0e-14;
 	for(int i=0; i<N; i++)
 	{
-		if(C[i] != 3)
+            if( fabs(C[i] - 3.0) > tolerance )
 		{ 
-			printf("Error: value of C[%d] = %d instead of 3\n", i, C[i]);
+			printf("Error: value of C[%d] = %f instead of 3.0\n", i, C[i]);
 			exit(-1);
 		}
 	}	
