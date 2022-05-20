@@ -152,11 +152,13 @@ Blocks In Grid    = 4096
 
 ## hipifying the Code
 
-To translate the code from CUDA to HIP, you can use the `hipify-perl` translation tool: 
+To translate the code from CUDA to HIP, you must load the `hip-cuda` module, then use the `hipify-perl` translation tool: 
 
 > NOTE: There are 2 versions of the `hipify` tool; a perl-based version and a clang-based version. For this tutorial we used the perl-based version only. For more information on the difference between the 2 versions, please see the <a href="https://www.exascaleproject.org/wp-content/uploads/2017/05/ORNL_HIP_webinar_20190606_final.pdf">slides</a> and <a href="https://youtu.be/3ZXbRJVvgJs">recording</a> from a webinar delivered by AMD.
 
 ```c
+$ module load cuda-hip/5.1.0
+
 $ hipify-perl vector_addition.cu > vector_addition.cpp
   warning: vector_addition.cu:#4 : #define cudaErrorCheck(call)                                                              \
   warning: vector_addition.cu:#36 : 	cudaErrorCheck( hipMalloc(&d_A, bytes) );
